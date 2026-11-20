@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#14263d" />
+  <meta name="description" content="10개의 질문으로 나의 일하는 방식과 커리어 성향을 알아보는 WORKTYPE 테스트" />
+  <title>WORKTYPE | 나의 커리어 성향 테스트</title>
+  <style>
+    :root {
+      --navy: #14263d;
+      --navy-2: #243c58;
+      --navy-3: #405773;
+      --ink: #1d2c3d;
+      --muted: #6e7b89;
+      --line: #dce3e9;
+      --surface: #ffffff;
+      --canvas: #f3f6f8;
+      --soft: #eaf0f5;
+      --soft-2: #f7f9fb;
+      --shadow: 0 18px 50px rgba(20, 38, 61, .07);
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: var(--canvas);
+      font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+      letter-spacing: -.025em;
+    }
+    button { font: inherit; }
+    button:focus-visible { outline: 3px solid #8da3ba; outline-offset: 3px; }
+    .shell { width: min(100% - 40px, 1080px); margin: 0 auto; padding: 30px 0 50px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--navy); font-size: 13px; font-weight: 850; letter-spacing: .14em; }
+    .brand-mark { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; color: white; background: var(--navy); font-size: 15px; letter-spacing: 0; }
+    .top-note { color: var(--muted); font-size: 11px; letter-spacing: .12em; }
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+
+    /* Hero */
+    .intro { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(260px, .65fr); align-items: center; gap: 48px; padding: clamp(30px, 6vw, 68px); min-height: 430px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; color: var(--navy-3); font-size: 11px; font-weight: 850; letter-spacing: .16em; }
+    .eyebrow::before { content: ""; width: 20px; height: 2px; border-radius: 2px; background: var(--navy-3); }
+    h1 { max-width: 590px; margin: 20px 0 18px; color: var(--navy); font-size: clamp(38px, 6vw, 62px); line-height: 1.15; letter-spacing: -.07em; }
+    h1 .accent { color: var(--navy-3); }
+    .intro-copy { max-width: 590px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.8; word-break: keep-all; }
+    .intro-meta { display: flex; flex-wrap: wrap; gap: 9px; margin: 26px 0 28px; }
+    .meta-pill { padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--navy-3); background: #fff; font-size: 11px; }
+    .meta-pill b { color: var(--navy); margin-right: 4px; }
+    .primary-btn { display: inline-flex; align-items: center; justify-content: center; gap: 18px; min-width: 190px; padding: 15px 20px; border: 1px solid var(--navy); border-radius: 12px; color: #fff; background: var(--navy); font-size: 14px; font-weight: 750; cursor: pointer; transition: background .18s ease, transform .18s ease; }
+    .primary-btn:hover { background: var(--navy-2); transform: translateY(-1px); }
+    .arrow { font-size: 18px; line-height: 1; }
+    .intro-foot { margin: 22px 0 0; color: #8793a0; font-size: 11px; line-height: 1.65; }
+    .hero-visual { position: relative; display: grid; place-items: center; min-height: 270px; border: 1px solid var(--line); border-radius: 20px; background: linear-gradient(145deg, #f8fafc, #edf2f6); overflow: hidden; }
+    .hero-orbit { position: absolute; width: 220px; height: 220px; border: 1px solid #d5dfe8; border-radius: 50%; }
+    .hero-orbit::before, .hero-orbit::after { content: ""; position: absolute; border: 1px solid #d5dfe8; border-radius: 50%; }
+    .hero-orbit::before { inset: 24px; }
+    .hero-orbit::after { inset: 48px; }
+    .hero-core { position: relative; z-index: 1; display: grid; place-items: center; width: 105px; height: 105px; border: 1px solid #d5dfe8; border-radius: 28px; color: white; background: var(--navy); box-shadow: 0 12px 30px rgba(20,38,61,.18); font-size: 40px; font-weight: 750; }
+    .hero-caption { position: absolute; z-index: 1; bottom: 22px; color: var(--navy-3); font-size: 10px; font-weight: 800; letter-spacing: .18em; }
+    .saved-prompt { display: none; margin-top: 12px; color: var(--navy-3); font-size: 12px; }
+    .saved-prompt button { padding: 0; border: 0; color: var(--navy); background: transparent; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+    /* Quiz */
+    .quiz { display: none; padding: clamp(22px, 4.5vw, 46px); }
+    .quiz-progress { margin-bottom: 34px; }
+    .progress-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 11px; }
+    .step-label { color: var(--muted); font-size: 12px; font-weight: 650; }
+    .step-label strong { color: var(--navy); font-size: 14px; }
+    .progress-percent { color: var(--navy); font-size: 13px; font-weight: 850; font-variant-numeric: tabular-nums; }
+    .progress-track { height: 8px; border-radius: 99px; background: #e8edf1; overflow: hidden; }
+    .progress-fill { width: 10%; height: 100%; border-radius: inherit; background: var(--navy); transition: width .25s ease; }
+    .quiz-layout { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(230px, .55fr); align-items: stretch; gap: 28px; }
+    .quiz-main { min-width: 0; }
+    .q-kicker { margin-bottom: 14px; color: var(--navy-3); font-size: 11px; font-weight: 850; letter-spacing: .15em; }
+    .question { margin: 0 0 12px; color: var(--navy); font-size: clamp(23px, 3.5vw, 34px); line-height: 1.42; letter-spacing: -.055em; word-break: keep-all; }
+    .question-sub { margin: 0 0 27px; color: var(--muted); font-size: 13px; line-height: 1.7; word-break: keep-all; }
+    .choices { display: grid; gap: 12px; }
+    .choice { display: flex; gap: 14px; align-items: flex-start; width: 100%; padding: 18px; text-align: left; border: 1px solid var(--line); border-radius: 14px; color: var(--ink); background: white; cursor: pointer; transition: border-color .16s ease, background .16s ease, box-shadow .16s ease; }
+    .choice:hover { border-color: #9aabba; background: #fafcfd; }
+    .choice.selected { border-color: var(--navy); background: #f1f5f8; box-shadow: inset 0 0 0 1px var(--navy); }
+    .choice-letter { flex: 0 0 28px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; color: var(--navy-3); background: var(--soft); font-size: 11px; font-weight: 850; }
+    .choice.selected .choice-letter { color: #fff; background: var(--navy); }
+    .choice-text { display: block; min-width: 0; padding-top: 2px; }
+    .choice-title { display: block; margin-bottom: 5px; color: var(--navy); font-size: 14px; font-weight: 780; }
+    .choice-desc { display: block; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .quiz-nav { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 27px; }
+    .text-btn { padding: 10px 0; border: 0; color: var(--muted); background: transparent; font-size: 13px; cursor: pointer; }
+    .text-btn:disabled { opacity: .3; cursor: default; }
+    .next-btn { min-width: 130px; padding: 13px 17px; border: 0; border-radius: 11px; color: #fff; background: var(--navy); font-size: 13px; font-weight: 750; cursor: pointer; transition: background .18s; }
+    .next-btn:hover:not(:disabled) { background: var(--navy-2); }
+    .next-btn:disabled { color: #8e9aa6; background: #e5e9ed; cursor: not-allowed; }
+    .quiz-aside { display: flex; flex-direction: column; justify-content: space-between; gap: 20px; padding: 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--soft-2); }
+    .aside-label { margin-bottom: 10px; color: var(--navy-3); font-size: 10px; font-weight: 850; letter-spacing: .14em; }
+    .aside-title { margin: 0 0 9px; color: var(--navy); font-size: 17px; line-height: 1.45; letter-spacing: -.04em; }
+    .aside-copy { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.75; word-break: keep-all; }
+    .axis-mini { padding-top: 16px; border-top: 1px solid var(--line); }
+    .axis-mini-row + .axis-mini-row { margin-top: 14px; }
+    .axis-mini-row span { display: block; margin-bottom: 7px; color: var(--navy-3); font-size: 11px; font-weight: 700; }
+    .axis-mini-bar { height: 5px; border-radius: 99px; background: #dce4eb; overflow: hidden; }
+    .axis-mini-bar i { display: block; width: 50%; height: 100%; border-radius: inherit; background: var(--navy-3); }
+
+    /* Result */
+    .result { display: none; padding: clamp(22px, 4.5vw, 46px); }
+    .result-header { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+    .result-type { color: var(--navy-3); font-size: 11px; font-weight: 850; letter-spacing: .16em; }
+    .saved-date { color: #8793a0; font-size: 11px; text-align: right; }
+    .result-layout { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: 30px; padding-top: 25px; }
+    .result-summary { min-width: 0; padding: 28px; border-radius: 18px; background: var(--navy); color: #fff; }
+    .result-symbol { display: grid; place-items: center; width: 62px; height: 62px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,.25); border-radius: 19px; color: var(--navy); background: #eaf0f5; font-size: 25px; font-weight: 850; }
+    .result-summary .result-overline { color: #c1ceda; font-size: 10px; font-weight: 850; letter-spacing: .17em; }
+    .result-summary h2 { margin: 12px 0 11px; color: #fff; font-size: clamp(30px, 4.3vw, 43px); line-height: 1.25; letter-spacing: -.065em; word-break: keep-all; }
+    .tagline { margin: 0; color: #e0e7ed; font-size: 14px; line-height: 1.75; word-break: keep-all; }
+    .result-description { margin: 20px 0 0; color: #c5d0da; font-size: 12px; line-height: 1.85; word-break: keep-all; }
+    .summary-divider { height: 1px; margin: 25px 0 18px; background: rgba(255,255,255,.2); }
+    .summary-label { margin-bottom: 9px; color: #b9c8d5; font-size: 10px; font-weight: 850; letter-spacing: .13em; }
+    .summary-environment { margin: 0; color: #fff; font-size: 12px; line-height: 1.8; word-break: keep-all; }
+    .result-details { min-width: 0; }
+    .section-title { margin: 0 0 13px; color: var(--navy); font-size: 13px; font-weight: 850; letter-spacing: -.02em; }
+    .axis-card { padding: 18px; border: 1px solid var(--line); border-radius: 15px; background: var(--soft-2); }
+    .axis-row + .axis-row { margin-top: 19px; }
+    .axis-labels { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 9px; color: var(--muted); font-size: 10px; }
+    .axis-labels strong { color: var(--navy); font-size: 11px; text-align: center; }
+    .axis-bar { position: relative; height: 7px; border-radius: 99px; background: #dfe6ec; }
+    .axis-marker { position: absolute; top: 50%; width: 13px; height: 13px; border: 2px solid white; border-radius: 50%; background: var(--navy); box-shadow: 0 0 0 1px var(--navy); transform: translate(-50%, -50%); }
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
+    .insight { min-height: 125px; padding: 16px; border: 1px solid var(--line); border-radius: 14px; }
+    .insight-label { margin-bottom: 9px; color: var(--navy-3); font-size: 10px; font-weight: 850; letter-spacing: .06em; }
+    .insight p { margin: 0; color: #506071; font-size: 12px; line-height: 1.75; word-break: keep-all; }
+    .jobs-section { margin-top: 22px; }
+    .jobs-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+    .job-card { display: flex; align-items: center; min-height: 65px; padding: 12px 10px; border: 1px solid var(--line); border-radius: 12px; color: var(--navy); background: #fff; font-size: 12px; font-weight: 750; line-height: 1.5; word-break: keep-all; }
+    .result-note { margin: 24px 0 0; padding-top: 16px; border-top: 1px solid var(--line); color: #8793a0; font-size: 10px; line-height: 1.7; word-break: keep-all; }
+    .result-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .result-actions .primary-btn, .secondary-btn { flex: 1 1 180px; min-width: 0; }
+    .secondary-btn { padding: 14px 16px; border: 1px solid #cbd5de; border-radius: 12px; color: var(--navy); background: #fff; font-size: 13px; font-weight: 750; cursor: pointer; transition: background .18s, border-color .18s; }
+    .secondary-btn:hover { border-color: var(--navy-3); background: var(--soft-2); }
+    .footer { padding-top: 24px; color: #9aa5af; font-size: 10px; text-align: center; letter-spacing: .08em; }
+
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 28px, 600px); padding-top: 20px; }
+      .intro { grid-template-columns: 1fr; gap: 28px; min-height: 0; }
+      .hero-visual { min-height: 190px; }
+      .hero-orbit { width: 160px; height: 160px; }
+      .hero-core { width: 78px; height: 78px; border-radius: 22px; font-size: 31px; }
+      .quiz-layout { grid-template-columns: 1fr; gap: 19px; }
+      .quiz-aside { min-height: 0; }
+      .result-layout { grid-template-columns: 1fr; gap: 22px; }
+    }
+    @media (max-width: 520px) {
+      .shell { width: min(100% - 22px, 480px); padding-top: 15px; }
+      .topbar { margin-bottom: 15px; }
+      .top-note { font-size: 9px; }
+      .intro, .quiz, .result { padding: 23px 19px; border-radius: 18px; }
+      h1 { font-size: 39px; }
+      .intro-copy { font-size: 13px; }
+      .intro-meta { gap: 7px; margin: 20px 0 23px; }
+      .meta-pill { padding: 7px 9px; font-size: 10px; }
+      .hero-visual { min-height: 160px; }
+      .quiz-progress { margin-bottom: 27px; }
+      .question { font-size: 25px; }
+      .question-sub { margin-bottom: 20px; }
+      .choice { padding: 15px 13px; }
+      .quiz-aside { padding: 17px; }
+      .result-header { align-items: flex-start; }
+      .result-summary { padding: 23px; }
+      .result-summary h2 { font-size: 33px; }
+      .insight-grid { grid-template-columns: 1fr; }
+      .insight { min-height: 0; }
+      .jobs-list { grid-template-columns: 1fr; }
+      .job-card { min-height: 0; padding: 13px; }
+      .result-actions { flex-direction: column; }
+      .result-actions .primary-btn, .result-actions .secondary-btn { width: 100%; flex-basis: auto; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">W</span><span>WORKTYPE</span></div>
+      <div class="top-note">MY CAREER TENDENCY TEST</div>
+    </header>
+
+    <section class="panel intro" id="intro">
+      <div class="intro-copy-wrap">
+        <div class="eyebrow">FIND YOUR WORK STYLE</div>
+        <h1>나답게 일하는<br /><span class="accent">방식</span>을 발견하는 시간</h1>
+        <p class="intro-copy">10개의 질문으로 나의 일하는 방식과 잘 맞는 커리어 방향을 탐색해 보세요.</p>
+        <div class="intro-meta">
+          <span class="meta-pill"><b>10</b> QUESTIONS</span>
+          <span class="meta-pill"><b>약 3분</b> 소요</span>
+          <span class="meta-pill"><b>4가지</b> 페르소나</span>
+        </div>
+        <button class="primary-btn" id="startBtn" type="button">테스트 시작하기 <span class="arrow">→</span></button>
+        <div class="saved-prompt" id="savedPrompt">이전에 저장한 결과가 있어요. <button type="button" id="viewSavedBtn">결과 다시 보기</button></div>
+        <p class="intro-foot">정답은 없습니다. 평소 나와 가장 가까운 선택지를 골라주세요.<br />이 테스트는 자기이해를 돕기 위한 참고 도구이며, 실제 역량이나 직업 적합성을 판정하지 않습니다.</p>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-orbit"></div>
+        <div class="hero-core">W</div>
+        <div class="hero-caption">DISCOVER YOUR WORKTYPE</div>
+      </div>
+    </section>
+
+    <section class="panel quiz" id="quiz" aria-live="polite">
+      <div class="quiz-progress">
+        <div class="progress-meta">
+          <div class="step-label"><strong id="stepCurrent">01</strong> / 10 QUESTIONS</div>
+          <div class="progress-percent" id="progressPercent">10%</div>
+        </div>
+        <div class="progress-track" role="progressbar" aria-label="테스트 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="10" id="progressTrack"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+      <div class="quiz-layout">
+        <div class="quiz-main">
+          <div class="q-kicker" id="questionKicker">WORK APPROACH</div>
+          <h2 class="question" id="questionText"></h2>
+          <p class="question-sub" id="questionSub"></p>
+          <div class="choices" id="choices"></div>
+          <div class="quiz-nav">
+            <button type="button" class="text-btn" id="prevBtn">← 이전</button>
+            <button type="button" class="next-btn" id="nextBtn" disabled>다음 질문 →</button>
+          </div>
+        </div>
+        <aside class="quiz-aside">
+          <div>
+            <div class="aside-label">ABOUT THIS TEST</div>
+            <h3 class="aside-title">평소의 나와 가까운 답을 선택해 주세요.</h3>
+            <p class="aside-copy">좋아 보이는 답보다 실제 행동에 가까운 답이 더 유용합니다. 두 선택지 모두 나에게 해당한다면, 조금 더 자주 나타나는 행동을 골라보세요.</p>
+          </div>
+          <div class="axis-mini">
+            <div class="axis-mini-row"><span>01 · 일하는 접근 방식</span><div class="axis-mini-bar"><i></i></div></div>
+            <div class="axis-mini-row"><span>02 · 협업하는 방식</span><div class="axis-mini-bar"><i style="width:65%"></i></div></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="panel result" id="result" aria-live="polite">
+      <div class="result-header">
+        <div class="result-type">YOUR WORKTYPE · PERSONAL REPORT</div>
+        <div class="saved-date" id="savedDate">결과 저장됨</div>
+      </div>
+      <div class="result-layout">
+        <div class="result-summary">
+          <div class="result-symbol" id="resultSymbol">A</div>
+          <div class="result-overline" id="resultOverline">THE ARCHITECT</div>
+          <h2 id="resultName">청사진을 그리는 설계자</h2>
+          <p class="tagline" id="resultTagline"></p>
+          <p class="result-description" id="resultDescription"></p>
+          <div class="summary-divider"></div>
+          <div class="summary-label">A GOOD WORK ENVIRONMENT</div>
+          <p class="summary-environment" id="environmentText"></p>
+        </div>
+        <div class="result-details">
+          <div class="section-title">나의 성향 밸런스</div>
+          <div class="axis-card">
+            <div class="axis-row">
+              <div class="axis-labels"><span>체계·분석형</span><strong id="methodWinner">체계·분석 성향</strong><span>실험·탐색형</span></div>
+              <div class="axis-bar"><span class="axis-marker" id="methodMarker" style="left:50%"></span></div>
+            </div>
+            <div class="axis-row">
+              <div class="axis-labels"><span>협업·관계형</span><strong id="peopleWinner">협업·관계 성향</strong><span>자율·집중형</span></div>
+              <div class="axis-bar"><span class="axis-marker" id="peopleMarker" style="left:50%"></span></div>
+            </div>
+          </div>
+          <div class="insight-grid">
+            <article class="insight"><div class="insight-label">STRENGTH · 강점</div><p id="strengthText"></p></article>
+            <article class="insight"><div class="insight-label">CHECK POINT · 유의할 점</div><p id="cautionText"></p></article>
+          </div>
+          <div class="jobs-section">
+            <div class="section-title">추천 직무 3가지</div>
+            <div class="jobs-list" id="jobsList"></div>
+          </div>
+        </div>
+      </div>
+      <p class="result-note">결과는 응답한 선택의 경향을 단순화해 보여주는 참고 정보입니다. 특정 직무의 적합성이나 실제 역량을 판정하는 검사가 아니며, 실제 진로 선택 시에는 관심 분야·경험·역량·업무 환경을 함께 고려해 주세요.</p>
+      <div class="result-actions">
+        <button class="primary-btn" id="restartBtn" type="button">새 테스트 시작하기 <span class="arrow">↻</span></button>
+        <button class="secondary-btn" id="copyBtn" type="button">결과 복사</button>
+        <button class="secondary-btn" id="imageBtn" type="button">결과 이미지 저장 ↓</button>
+      </div>
+    </section>
+    <footer class="footer">WORKTYPE · A SMALL GUIDE TO KNOW YOURSELF AT WORK</footer>
+  </main>
+
+  <script>
+    'use strict';
+
+    const STORAGE_KEY = 'worktype:lastResult:v1';
+    const questions = [
+      { axis: 'method', kicker: 'WORK APPROACH', title: '새로운 프로젝트를 맡았다면, 가장 먼저 무엇을 하나요?', sub: '일을 시작할 때 자연스럽게 손이 가는 행동을 골라보세요.', choices: [
+        ['목표와 조건부터 정리한다', '해야 할 일과 일정, 필요한 정보를 먼저 구조화한다.'],
+        ['작게라도 먼저 시도한다', '초안을 만들거나 직접 해보며 방향을 구체화한다.']
+      ]},
+      { axis: 'people', kicker: 'COLLABORATION', title: '복잡한 문제를 만났을 때 더 편한 해결 방식은?', sub: '둘 다 필요한 방식이지만, 평소 더 선호하는 쪽을 선택하세요.', choices: [
+        ['주변 사람과 의견을 나눈다', '다른 관점을 듣고 함께 해결책을 찾는 편이다.'],
+        ['혼자 생각을 충분히 정리한다', '혼자 깊이 고민한 뒤 정리된 의견을 공유하는 편이다.']
+      ]},
+      { axis: 'method', kicker: 'DECISION STYLE', title: '정보가 충분하지 않은 상황에서 결정을 내려야 한다면?', sub: '불확실성을 마주했을 때 나의 기본 반응에 가까운 것은?', choices: [
+        ['확인할 수 있는 자료를 더 모은다', '판단 기준을 세우고 가능한 근거를 확인한 뒤 결정한다.'],
+        ['가능한 선택지를 빠르게 시험한다', '작은 실행으로 반응을 확인하면서 다음 결정을 내린다.']
+      ]},
+      { axis: 'people', kicker: 'TEAMWORK', title: '팀 프로젝트에서 가장 보람을 느끼는 순간은?', sub: '성과를 만드는 과정에서 특히 만족스러운 장면을 떠올려보세요.', choices: [
+        ['팀원들과 의견을 모아 결과를 만들 때', '서로의 강점을 연결해 혼자서는 어려운 결과를 낼 때'],
+        ['내가 맡은 부분을 깊이 파고들어 완성할 때', '독립적으로 집중해 높은 완성도의 결과를 만들 때']
+      ]},
+      { axis: 'method', kicker: 'FEEDBACK STYLE', title: '진행 중인 업무에 예상하지 못한 피드백이 들어오면?', sub: '피드백을 받은 직후의 반응에 가까운 것을 골라보세요.', choices: [
+        ['기준과 목표에 비춰 수정 범위를 정한다', '요청의 배경을 확인하고 우선순위에 따라 반영한다.'],
+        ['수정안을 빠르게 만들어 반응을 본다', '여러 방식을 시도해 더 나은 방향을 찾아본다.']
+      ]},
+      { axis: 'people', kicker: 'MOTIVATION', title: '일을 계속하게 만드는 동력은 무엇에 더 가까운가요?', sub: '하나만 고른다면 더 오래 집중하게 만드는 요소는?', choices: [
+        ['함께 일하는 사람들과의 신뢰와 호흡', '서로 도움을 주고받으며 공동의 목표를 이루는 과정'],
+        ['스스로 정한 목표와 몰입할 수 있는 시간', '방해받지 않고 내 방식대로 깊이 집중하는 과정']
+      ]},
+      { axis: 'method', kicker: 'PLANNING', title: '마감까지 시간이 넉넉한 업무를 맡았다면?', sub: '일정을 관리하는 평소 습관을 생각해보세요.', choices: [
+        ['단계를 나누고 중간 일정을 정한다', '전체 일정을 계획하고 진행 상황을 점검한다.'],
+        ['우선 해보면서 필요한 일정을 조정한다', '실행 과정에서 생기는 변수에 맞춰 유연하게 움직인다.']
+      ]},
+      { axis: 'people', kicker: 'COMMUNICATION', title: '업무 중 막히는 부분이 생겼을 때 먼저 하는 행동은?', sub: '실제로 자주 하는 행동에 가까운 것을 선택하세요.', choices: [
+        ['동료에게 상황을 공유하고 함께 방법을 찾는다', '대화를 통해 빠르게 관점을 넓히고 해결 방향을 찾는다.'],
+        ['혼자 가능한 방법을 먼저 충분히 찾아본다', '스스로 해결을 시도한 뒤 필요한 경우 도움을 요청한다.']
+      ]},
+      { axis: 'method', kicker: 'LEARNING STYLE', title: '새로운 도구나 업무 방식을 배울 때 더 선호하는 방법은?', sub: '처음 접하는 것을 익힐 때의 습관을 떠올려보세요.', choices: [
+        ['전체 구조와 사용법을 먼저 이해한다', '원리와 절차를 파악한 다음 실제로 적용한다.'],
+        ['직접 눌러보고 기능을 익힌다', '사용하면서 시행착오를 겪고 필요한 내용을 찾아본다.']
+      ]},
+      { axis: 'people', kicker: 'WORK ENVIRONMENT', title: '둘 중 하나의 업무 환경만 선택해야 한다면?', sub: '어느 쪽에서 나의 컨디션과 집중력이 더 잘 유지될까요?', choices: [
+        ['자주 소통하고 함께 조율하는 환경', '진행 상황과 의견을 나누며 협력하는 분위기'],
+        ['개인의 책임과 자율성이 큰 환경', '각자의 전문성을 존중하고 독립적으로 일하는 분위기']
+      ]}
+    ];
+
+    const profiles = {
+      'structured-independent': {
+        name: '청사진을 그리는 설계자', shortName: '설계자', overline: 'THE ARCHITECT', symbol: 'A',
+        tagline: '복잡한 문제를 차분히 정리하고, 자신만의 기준으로 완성도를 높이는 사람.',
+        description: '정보를 모아 구조를 만들고 우선순위를 정한 뒤, 혼자 깊이 몰입해 결과를 만드는 경향이 있습니다. 계획과 논리가 필요한 과제에서 강점을 발휘할 수 있습니다.',
+        strength: '문제를 체계적으로 정리하고 독립적으로 깊이 있게 파고드는 데 강점이 있을 수 있습니다. 계획과 품질 관리가 중요한 상황에서 안정적으로 기여할 수 있습니다.',
+        caution: '충분히 준비하느라 시작이 늦어지거나, 혼자 해결하려다 공유 시점을 놓치지 않도록 중간 진행 상황을 나누어 보세요.',
+        environment: '목표와 역할이 명확하고, 한 가지 과제에 집중할 시간과 자율성이 보장되는 환경이 잘 맞을 수 있습니다.',
+        jobs: ['전략·사업기획', '시장·경영 리서치', '데이터 분석']
+      },
+      'structured-collaborative': {
+        name: '사이를 잇는 조율자', shortName: '조율자', overline: 'THE CONNECTOR', symbol: 'C',
+        tagline: '흩어진 정보와 사람을 연결해, 모두가 움직일 수 있는 길을 만드는 사람.',
+        description: '여러 의견과 정보를 정돈하고 관계자들이 같은 방향을 바라보도록 조율하는 경향이 있습니다. 협업 과정의 흐름을 만들고 실행을 안정시키는 일에서 강점을 보일 수 있습니다.',
+        strength: '상황을 정리해 공유하고 서로 다른 의견 사이에서 공통 기준을 찾는 데 강점이 있을 수 있습니다. 협업 과정의 누락을 줄이고 실행을 안정시키는 데 기여할 수 있습니다.',
+        caution: '모두의 의견을 반영하려다 결정이 늦어지지 않도록, 우선순위와 결정 시한을 먼저 정해 보세요.',
+        environment: '역할과 절차가 어느 정도 정리되어 있고, 다양한 사람과 정보를 주고받으며 공동 목표를 달성하는 환경이 잘 맞을 수 있습니다.',
+        jobs: ['프로젝트 매니저(PM)', '마케팅 운영·기획', '인사·조직문화']
+      },
+      'exploratory-independent': {
+        name: '길을 여는 개척자', shortName: '개척자', overline: 'THE EXPLORER', symbol: 'E',
+        tagline: '정답이 없는 문제 앞에서 먼저 움직이며, 새로운 가능성을 찾아내는 사람.',
+        description: '정해진 답을 따르기보다 직접 시도하고 경험하면서 방향을 찾아가는 경향이 있습니다. 자율성이 높고 빠른 실험이 가능한 과제에서 강점을 발휘할 수 있습니다.',
+        strength: '낯선 과제에 주저하지 않고 뛰어들며 시행착오를 통해 대안을 찾는 데 강점이 있을 수 있습니다. 변화가 잦거나 정답이 정해져 있지 않은 상황에서 기여할 수 있습니다.',
+        caution: '빠른 실행에 비해 기록이나 마무리가 부족해지지 않도록 중간 점검 기준을 두고, 배운 점을 다음 시도에 연결해 보세요.',
+        environment: '시도할 수 있는 자율성과 실험의 여지가 있고, 업무 방식이나 우선순위를 유연하게 조정할 수 있는 환경이 잘 맞을 수 있습니다.',
+        jobs: ['신사업·사업개발', '신규 서비스 기획', '그로스 마케팅']
+      },
+      'exploratory-collaborative': {
+        name: '불씨를 키우는 촉진자', shortName: '촉진자', overline: 'THE CATALYST', symbol: 'F',
+        tagline: '사람들의 아이디어를 모아 빠르게 시도하고, 팀에 활기를 더하는 사람.',
+        description: '사람들과 아이디어를 주고받으며 실행의 속도를 높이는 경향이 있습니다. 새로운 시도를 팀의 움직임으로 연결하고 참여를 이끌어내는 과정에서 강점을 발휘할 수 있습니다.',
+        strength: '아이디어를 행동으로 옮기고 주변의 참여를 이끌어내는 데 강점이 있을 수 있습니다. 다양한 사람과 협력하며 새로운 기회를 탐색하는 상황에서 기여할 수 있습니다.',
+        caution: '새로운 시도를 넓히다 핵심 과제가 흐려지지 않도록, 실행 전 목표와 완료 기준을 짧게라도 합의해 보세요.',
+        environment: '소통이 활발하고 빠른 피드백이 오가며, 팀 단위로 아이디어를 시험하고 개선할 수 있는 환경이 잘 맞을 수 있습니다.',
+        jobs: ['브랜드 마케팅', '콘텐츠 마케팅', 'PR·파트너십']
+      }
+    };
+
+    let current = 0;
+    let answers = Array(questions.length).fill(null);
+    let lastSavedResult = null;
+    const $ = (id) => document.getElementById(id);
+
+    function showScreen(name) {
+      $('intro').style.display = name === 'intro' ? 'grid' : 'none';
+      $('quiz').style.display = name === 'quiz' ? 'block' : 'none';
+      $('result').style.display = name === 'result' ? 'block' : 'none';
+    }
+
+    function renderQuestion() {
+      const q = questions[current];
+      const percentage = Math.round(((current + 1) / questions.length) * 100);
+      $('stepCurrent').textContent = String(current + 1).padStart(2, '0');
+      $('progressPercent').textContent = `${percentage}%`;
+      $('progressFill').style.width = `${percentage}%`;
+      $('progressTrack').setAttribute('aria-valuenow', String(percentage));
+      $('questionKicker').textContent = q.kicker;
+      $('questionText').textContent = q.title;
+      $('questionSub').textContent = q.sub;
+      $('choices').innerHTML = '';
+      q.choices.forEach((choice, idx) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `choice${answers[current] === idx ? ' selected' : ''}`;
+        button.setAttribute('aria-pressed', answers[current] === idx ? 'true' : 'false');
+        button.innerHTML = `<span class="choice-letter">${idx === 0 ? 'A' : 'B'}</span><span class="choice-text"><span class="choice-title"></span><span class="choice-desc"></span></span>`;
+        button.querySelector('.choice-title').textContent = choice[0];
+        button.querySelector('.choice-desc').textContent = choice[1];
+        button.addEventListener('click', () => {
+          answers[current] = idx;
+          renderQuestion();
+        });
+        $('choices').appendChild(button);
+      });
+      $('prevBtn').disabled = current === 0;
+      $('nextBtn').disabled = answers[current] === null;
+      $('nextBtn').textContent = current === questions.length - 1 ? '결과 확인하기 →' : '다음 질문 →';
+    }
+
+    function getScores() {
+      const scores = { method: 0, people: 0, methodTotal: 0, peopleTotal: 0 };
+      questions.forEach((q, i) => {
+        if (q.axis === 'method') {
+          scores.methodTotal++;
+          if (answers[i] === 0) scores.method++;
+        } else {
+          scores.peopleTotal++;
+          if (answers[i] === 0) scores.people++;
+        }
+      });
+      return scores;
+    }
+
+    function getProfileKey(scores) {
+      const methodStructured = scores.method >= Math.ceil(scores.methodTotal / 2);
+      const peopleCollaborative = scores.people >= Math.ceil(scores.peopleTotal / 2);
+      return `${methodStructured ? 'structured' : 'exploratory'}-${peopleCollaborative ? 'collaborative' : 'independent'}`;
+    }
+
+    function formatSavedDate(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '결과 저장됨';
+      return `저장된 결과 · ${new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(date)}`;
+    }
+
+    function saveResult(data) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        lastSavedResult = data;
+        return true;
+      } catch (error) {
+        console.warn('결과를 이 브라우저에 저장하지 못했습니다.', error);
+        return false;
+      }
+    }
+
+    function loadSavedResult() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        const data = JSON.parse(raw);
+        if (!data || !profiles[data.key] || !data.scores || !data.createdAt) return null;
+        return data;
+      } catch (error) {
+        console.warn('저장된 결과를 불러오지 못했습니다.', error);
+        return null;
+      }
+    }
+
+    function renderResult(data, shouldSave = false) {
+      $('resultName').dataset.profileKey = data.key;
+      const p = profiles[data.key];
+      const scores = data.scores;
+      $('resultSymbol').textContent = p.symbol;
+      $('resultOverline').textContent = p.overline;
+      $('resultName').textContent = p.name;
+      $('resultTagline').textContent = p.tagline;
+      $('resultDescription').textContent = p.description;
+      $('strengthText').textContent = p.strength;
+      $('cautionText').textContent = p.caution;
+      $('environmentText').textContent = p.environment;
+      $('jobsList').innerHTML = '';
+      p.jobs.forEach(job => {
+        const el = document.createElement('div');
+        el.className = 'job-card';
+        el.textContent = job;
+        $('jobsList').appendChild(el);
+      });
+      const methodPct = (scores.method / scores.methodTotal) * 100;
+      const peoplePct = (scores.people / scores.peopleTotal) * 100;
+      $('methodMarker').style.left = `${Math.min(94, Math.max(6, methodPct))}%`;
+      $('peopleMarker').style.left = `${Math.min(94, Math.max(6, peoplePct))}%`;
+      $('methodWinner').textContent = scores.method >= Math.ceil(scores.methodTotal / 2) ? '체계·분석 성향' : '실험·탐색 성향';
+      $('peopleWinner').textContent = scores.people >= Math.ceil(scores.peopleTotal / 2) ? '협업·관계 성향' : '자율·집중 성향';
+      $('savedDate').textContent = formatSavedDate(data.createdAt);
+      if (shouldSave) {
+        const saved = saveResult(data);
+        if (!saved) $('savedDate').textContent = '현재 브라우저에서는 자동 저장이 제한될 수 있어요';
+      }
+      showScreen('result');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function finishTest() {
+      const scores = getScores();
+      const data = { key: getProfileKey(scores), scores, answers: [...answers], createdAt: new Date().toISOString() };
+      renderResult(data, true);
+    }
+
+    function getResultText() {
+      const p = profiles[$('resultName').dataset.profileKey] || profiles[lastSavedResult?.key];
+      if (!p) return '';
+      const scores = lastSavedResult?.scores;
+      const balance = scores ? `성향 밸런스: ${scores.method >= Math.ceil(scores.methodTotal / 2) ? '체계·분석' : '실험·탐색'} / ${scores.people >= Math.ceil(scores.peopleTotal / 2) ? '협업·관계' : '자율·집중'}` : '';
+      return [
+        `나의 커리어 페르소나: ${p.name}`,
+        p.tagline,
+        '',
+        p.description,
+        balance,
+        `강점: ${p.strength}`,
+        `유의할 점: ${p.caution}`,
+        `잘 맞을 수 있는 업무 환경: ${p.environment}`,
+        `추천 직무: ${p.jobs.join(', ')}`,
+        '',
+        '※ 자기이해를 위한 참고 결과이며, 실제 역량이나 직업 적합성을 판정하지 않습니다.'
+      ].filter(Boolean).join('\n');
+    }
+
+    async function copyResult() {
+      const btn = $('copyBtn');
+      const text = getResultText();
+      if (!text) return;
+      const original = '결과 복사';
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const area = document.createElement('textarea');
+          area.value = text;
+          area.style.position = 'fixed';
+          area.style.opacity = '0';
+          document.body.appendChild(area);
+          area.select();
+          const copied = document.execCommand('copy');
+          area.remove();
+          if (!copied) throw new Error('Copy command failed');
+        }
+        btn.textContent = '복사 완료 ✓';
+      } catch (error) {
+        btn.textContent = '복사할 수 없어요';
+      }
+      window.setTimeout(() => { btn.textContent = original; }, 1800);
+    }
+
+    function roundedRect(ctx, x, y, width, height, radius, fill) {
+      const r = Math.min(radius, width / 2, height / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + width, y, x + width, y + height, r);
+      ctx.arcTo(x + width, y + height, x, y + height, r);
+      ctx.arcTo(x, y + height, x, y, r);
+      ctx.arcTo(x, y, x + width, y, r);
+      ctx.closePath();
+      if (fill) ctx.fill();
+    }
+
+    function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight, maxLines = 5) {
+      const paragraphs = String(text).split('\n');
+      let lineCount = 0;
+      for (const paragraph of paragraphs) {
+        const chars = Array.from(paragraph);
+        let line = '';
+        for (const char of chars) {
+          const testLine = line + char;
+          if (ctx.measureText(testLine).width > maxWidth && line) {
+            ctx.fillText(line, x, y + lineCount * lineHeight);
+            line = char;
+            lineCount++;
+            if (lineCount >= maxLines) return lineCount;
+          } else {
+            line = testLine;
+          }
+        }
+        if (line && lineCount < maxLines) {
+          ctx.fillText(line, x, y + lineCount * lineHeight);
+          lineCount++;
+        }
+        if (lineCount >= maxLines) break;
+      }
+      return lineCount;
+    }
+
+    function drawResultImage() {
+      const p = profiles[$('resultName').dataset.profileKey] || profiles[lastSavedResult?.key];
+      if (!p) throw new Error('표시할 결과가 없습니다.');
+      const canvas = document.createElement('canvas');
+      canvas.width = 1200;
+      canvas.height = 1500;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('이미지를 만들 수 없는 브라우저입니다.');
+
+      // Background and report card
+      ctx.fillStyle = '#edf2f6';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#dfe7ee';
+      ctx.beginPath(); ctx.arc(1080, 135, 180, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(80, 1390, 210, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      roundedRect(ctx, 54, 54, 1092, 1392, 34, true);
+
+      const left = 118;
+      ctx.fillStyle = '#14263d';
+      ctx.font = '800 25px Pretendard, "Noto Sans KR", sans-serif';
+      ctx.fillText('WORKTYPE', left, 132);
+      ctx.fillStyle = '#77889a';
+      ctx.font = '700 16px Pretendard, "Noto Sans KR", sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText('MY CAREER PROFILE', 1080, 132);
+      ctx.textAlign = 'left';
+      ctx.strokeStyle = '#dce3e9'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(left, 170); ctx.lineTo(1080, 170); ctx.stroke();
+
+      // Persona marker and name
+      ctx.fillStyle = '#14263d';
+      roundedRect(ctx, left, 220, 96, 96, 24, true);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '800 48px Pretendard, "Noto Sans KR", sans-serif';
+      ctx.textAlign = 'center'; ctx.fillText(p.symbol, left + 48, 283); ctx.textAlign = 'left';
+      ctx.fillStyle = '#667b91';
+      ctx.font = '800 17px Pretendard, "Noto Sans KR", sans-serif';
+      ctx.fillText(p.overline, left + 124, 246);
+      ctx.fillStyle = '#14263d';
+      ctx.font = '800 49px Pretendard, "Noto Sans KR", sans-serif';
+      ctx.fillText(p.name, left + 124, 300);
+      ctx.fillStyle = '#425970';
+      ctx.font = '600 24px Pretendard, "Noto Sans KR", sans-serif';
+      wrapCanvasText(ctx, p.tagline, left, 380, 930, 39, 2);
+      ctx.fillStyle = '#667687';
+      ctx.font = '400 20px Pretendard, "Noto Sans KR", sans-serif';
+      wrapCanvasText(ctx, p.description, left, 480, 930, 34, 4);
+
+      ctx.strokeStyle = '#dce3e9'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(left, 635); ctx.lineTo(1080, 635); ctx.stroke();
+
+      // Recommended roles
+      ctx.fillStyle = '#667b91';
+      ctx.font = '800 17px Pretendard, "Noto Sans KR", sans-serif';
+      ctx.fillText('RECOMMENDED ROLES', left, 690);
+      ctx.fillStyle = '#14263d';
+      ctx.font = '800 27px Pretendard, "Noto Sans KR", sans-serif';
+      ctx.fillText('추천 직무 3가지', left, 730);
+      const gap = 16;
+      const cardW = (962 - gap * 2) / 3;
+      p.jobs.forEach((job, index) => {
+        const x = left + index * (cardW + gap);
+        ctx.fillStyle = '#f1f5f8';
+        roundedRect(ctx, x, 760, cardW, 104, 16, true);
+        ctx.fillStyle = '#14263d';
+        ctx.font = '700 21px Pretendard, "Noto Sans KR", sans-serif';
+        wrapCanvasText(ctx, job, x + 20, 820, cardW - 40, 29, 2);
+      });
+
+      // Strength and environment
+      ctx.fillStyle = '#667b91';
+      ctx.font = '800 17px Pretendard, "Noto Sans KR", sans-serif';
+      ctx.fillText('MY STRENGTH', left, 930);
+      ctx.fillStyle = '#14263d';
+      ctx.font = '400 20px Pretendard, "Noto Sans KR", sans-serif';
+      wrapCanvasText(ctx, p.strength, left, 970, 950, 32, 3);
+
+      ctx.strokeStyle = '#dce3e9'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(left, 1090); ctx.lineTo(1080, 1090); ctx.stroke();
+      ctx.fillStyle = '#667b91';
+      ctx.font = '800 17px Pretendard, "Noto Sans KR", sans-serif';
+      ctx.fillText('A GOOD WORK ENVIRONMENT', left, 1140);
+      ctx.fillStyle = '#425970';
+      ctx.font = '400 20px Pretendard, "Noto Sans KR", sans-serif';
+      wrapCanvasText(ctx, p.environment, left, 1180, 950, 32, 3);
+
+      ctx.strokeStyle = '#dce3e9'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(left, 1320); ctx.lineTo(1080, 1320); ctx.stroke();
+      ctx.fillStyle = '#8795a3';
+      ctx.font = '400 15px Pretendard, "Noto Sans KR", sans-serif';
+      ctx.fillText('자기이해를 위한 참고 결과 · 실제 직무 적합성 판정이 아닙니다.', left, 1360);
+      ctx.textAlign = 'right';
+      ctx.font = '800 15px Pretendard, "Noto Sans KR", sans-serif';
+      ctx.fillStyle = '#14263d';
+      ctx.fillText('WORKTYPE', 1080, 1360);
+      ctx.textAlign = 'left';
+      return canvas;
+    }
+
+    function downloadResultImage() {
+      const btn = $('imageBtn');
+      const original = '결과 이미지 저장 ↓';
+      try {
+        const canvas = drawResultImage();
+        const downloadBlob = (blob) => {
+          if (!blob) throw new Error('이미지 파일을 생성하지 못했습니다.');
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          const p = profiles[$('resultName').dataset.profileKey] || profiles[lastSavedResult?.key];
+          link.href = url;
+          link.download = `WORKTYPE_${p.shortName}_결과.png`;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.setTimeout(() => URL.revokeObjectURL(url), 1500);
+          btn.textContent = '이미지 저장 완료 ✓';
+          window.setTimeout(() => { btn.textContent = original; }, 2000);
+        };
+        if (canvas.toBlob) canvas.toBlob(downloadBlob, 'image/png');
+        else {
+          const dataUrl = canvas.toDataURL('image/png');
+          const link = document.createElement('a');
+          const p = profiles[$('resultName').dataset.profileKey] || profiles[lastSavedResult?.key];
+          link.href = dataUrl;
+          link.download = `WORKTYPE_${p.shortName}_결과.png`;
+          link.click();
+          btn.textContent = '이미지 저장 완료 ✓';
+          window.setTimeout(() => { btn.textContent = original; }, 2000);
+        }
+      } catch (error) {
+        console.error(error);
+        btn.textContent = '이미지를 저장하지 못했어요';
+        window.setTimeout(() => { btn.textContent = original; }, 2200);
+      }
+    }
+
+    function startTest() {
+      current = 0;
+      answers = Array(questions.length).fill(null);
+      showScreen('quiz');
+      renderQuestion();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    $('startBtn').addEventListener('click', startTest);
+    $('viewSavedBtn').addEventListener('click', () => {
+      if (lastSavedResult) renderResult(lastSavedResult, false);
+    });
+    $('prevBtn').addEventListener('click', () => {
+      if (current > 0) { current--; renderQuestion(); }
+    });
+    $('nextBtn').addEventListener('click', () => {
+      if (answers[current] === null) return;
+      if (current < questions.length - 1) { current++; renderQuestion(); }
+      else finishTest();
+    });
+    $('restartBtn').addEventListener('click', () => {
+      showScreen('intro');
+      $('savedPrompt').style.display = lastSavedResult ? 'block' : 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    $('copyBtn').addEventListener('click', copyResult);
+    $('imageBtn').addEventListener('click', downloadResultImage);
+
+    // Restore the most recently completed test when this page is opened again.
+    lastSavedResult = loadSavedResult();
+    if (lastSavedResult) {
+      renderResult(lastSavedResult, false);
+      $('savedPrompt').style.display = 'block';
+    } else {
+      $('savedPrompt').style.display = 'none';
+      showScreen('intro');
+    }
+
+  </script>
+</body>
+</html>
