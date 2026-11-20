@@ -88,8 +88,8 @@
     .choice-title { display: block; margin-bottom: 5px; color: var(--navy); font-size: 14px; font-weight: 780; }
     .choice-desc { display: block; color: var(--muted); font-size: 12px; line-height: 1.6; }
     .quiz-nav { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 27px; }
-    .text-btn { padding: 10px 0; border: 0; color: var(--muted); background: transparent; font-size: 13px; cursor: pointer; }
-    .text-btn:disabled { opacity: .3; cursor: default; }
+    .prev-btn { min-width: 130px; padding: 13px 17px; border: 1px solid #cbd5de; border-radius: 11px; color: var(--navy); background: #fff; font-size: 13px; font-weight: 750; cursor: pointer; transition: background .18s, border-color .18s; }
+    .prev-btn:hover { border-color: var(--navy-3); background: var(--soft-2); }
     .next-btn { min-width: 130px; padding: 13px 17px; border: 0; border-radius: 11px; color: #fff; background: var(--navy); font-size: 13px; font-weight: 750; cursor: pointer; transition: background .18s; }
     .next-btn:hover:not(:disabled) { background: var(--navy-2); }
     .next-btn:disabled { color: #8e9aa6; background: #e5e9ed; cursor: not-allowed; }
@@ -221,7 +221,7 @@
           <p class="question-sub" id="questionSub"></p>
           <div class="choices" id="choices"></div>
           <div class="quiz-nav">
-            <button type="button" class="text-btn" id="prevBtn">← 이전</button>
+            <button type="button" class="prev-btn" id="prevBtn">← 이전</button>
             <button type="button" class="next-btn" id="nextBtn" disabled>다음 질문 →</button>
           </div>
         </div>
@@ -409,7 +409,8 @@
         });
         $('choices').appendChild(button);
       });
-      $('prevBtn').disabled = current === 0;
+      $('prevBtn').disabled = false;
+      $('prevBtn').textContent = current === 0 ? '← 소개 화면' : '← 이전 질문';
       $('nextBtn').disabled = answers[current] === null;
       $('nextBtn').textContent = current === questions.length - 1 ? '결과 확인하기 →' : '다음 질문 →';
     }
@@ -738,7 +739,14 @@
       if (lastSavedResult) renderResult(lastSavedResult, false);
     });
     $('prevBtn').addEventListener('click', () => {
-      if (current > 0) { current--; renderQuestion(); }
+      if (current > 0) {
+        current--;
+        renderQuestion();
+      } else {
+        showScreen('intro');
+        $('savedPrompt').style.display = lastSavedResult ? 'block' : 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     });
     $('nextBtn').addEventListener('click', () => {
       if (answers[current] === null) return;
